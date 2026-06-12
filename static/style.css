@@ -1,0 +1,68 @@
+:root {
+  color-scheme: dark;
+  --bg: #0f1117;
+  --panel: #171b24;
+  --panel-2: #202636;
+  --text: #edf2ff;
+  --muted: #9ea8c3;
+  --accent: #5cc8ff;
+  --green: #3ddc97;
+  --yellow: #ffd166;
+  --red: #ff6b6b;
+  --border: #2d364b;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); }
+.page { max-width: 1500px; margin: 0 auto; padding: 24px; }
+.hero, .card, .flash { background: var(--panel); border: 1px solid var(--border); border-radius: 18px; }
+.hero { padding: 24px; display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-bottom: 20px; }
+h1, h2 { margin: 0 0 10px; }
+p { margin: 0; }
+.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.stat { padding: 18px; }
+.stat span, .muted { color: var(--muted); }
+.stat strong { display: block; font-size: 2rem; margin-top: 10px; }
+.grid.two { display: grid; grid-template-columns: 1.2fr .8fr; gap: 16px; margin-bottom: 20px; }
+.card { padding: 18px; margin-bottom: 20px; }
+.form label { display: block; font-size: .95rem; color: var(--muted); margin-bottom: 12px; }
+input, select, button { font: inherit; }
+input, select { width: 100%; padding: 12px 14px; margin-top: 6px; border-radius: 12px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); }
+.row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: none; border-radius: 12px; padding: 11px 16px; background: var(--accent); color: #03131e; cursor: pointer; text-decoration: none; font-weight: 700; }
+.button.secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); }
+.button.danger { background: var(--red); color: white; }
+.button.tiny { padding: 8px 10px; font-size: .85rem; }
+.flash-wrap { display: grid; gap: 10px; margin-bottom: 18px; }
+.flash { padding: 14px 16px; }
+.flash.success { border-color: rgba(61, 220, 151, .4); }
+.flash.error { border-color: rgba(255, 107, 107, .45); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 14px 10px; border-bottom: 1px solid var(--border); vertical-align: top; text-align: left; }
+.item-cell { display: flex; gap: 12px; min-width: 280px; }
+.thumb-wrap { flex: 0 0 auto; }
+.thumb { width: 72px; height: 72px; border-radius: 12px; object-fit: cover; background: var(--panel-2); display: block; border: 1px solid var(--border); }
+.placeholder { display: grid; place-items: center; color: var(--muted); font-size: .8rem; }
+.pill { display: inline-block; padding: 6px 10px; border-radius: 999px; text-transform: capitalize; font-size: .85rem; }
+.pill.owned { background: rgba(61, 220, 151, .15); color: var(--green); }
+.pill.wanted { background: rgba(255, 209, 102, .14); color: var(--yellow); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.inline-form { display: flex; gap: 8px; align-items: center; }
+.qty { width: 80px; }
+.file-picker { display: grid; gap: 10px; }
+.review-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.review-photo { display: block; padding: 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--panel-2); color: var(--text); text-decoration: none; }
+.review-photo:hover { border-color: var(--accent); }
+.pill.review { background: rgba(92, 200, 255, .14); color: var(--accent); }
+
+.file-input { width: 100%; padding: 14px; border-radius: 12px; border: 1px dashed var(--border); background: var(--panel-2); color: var(--muted); }
+.item-link { color: var(--text); text-decoration: none; }
+.item-link:hover { text-decoration: underline; }
+.notes-form { display: flex; gap: 8px; }
+.notes-form input { min-width: 180px; }
+.empty { text-align: center; color: var(--muted); padding: 24px; }
+code { color: var(--yellow); }
+@media (max-width: 1100px) {
+  .summary-grid, .grid.two, .row { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; align-items: flex-start; }
+}

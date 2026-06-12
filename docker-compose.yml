@@ -1,0 +1,14 @@
+services:
+  lego-catalog:
+    build: .
+    container_name: lego-catalog
+    restart: unless-stopped
+    ports:
+      - "${LEGO_CATALOG_PORT:-3012}:3012"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/data
+      - ./static/cache:/app/static/cache
+      # Optional: local photo folder for manual minifigure review/extraction.
+      # - ${LEGO_PHOTO_REVIEW_DIR:-./photos}:/photos:ro

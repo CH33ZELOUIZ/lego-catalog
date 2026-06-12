@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LEGO Catalog</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div>
+        <h1>LEGO Catalog</h1>
+        <p>Track owned sets, wanted sets, and minifigures. Import Rebrickable CSVs. Export back out. Refresh pricing from Brickset.</p>
+      </div>
+      <div class="actions">
+        <a class="button secondary" href="{{ url_for('review_page') }}">Review queue</a>
+        <a class="button secondary" href="{{ url_for('export_owned') }}">Export owned CSV</a>
+      </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <section class="flash-wrap">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% endwith %}
+
+    <section class="summary-grid">
+      <div class="card stat"><span>Owned sets</span><strong>{{ summary['owned']['set'] }}</strong></div>
+      <div class="card stat"><span>Owned minifigs</span><strong>{{ summary['owned']['minifig'] }}</strong></div>
+      <div class="card stat"><span>Wanted sets</span><strong>{{ summary['wanted']['set'] }}</strong></div>
+      <div class="card stat"><span>Wanted minifigs</span><strong>{{ summary['wanted']['minifig'] }}</strong></div>
+    </section>
+
+    <section class="grid two">
+      <form class="card form" method="post" action="{{ url_for('add_item') }}">
+        <h2>Add item</h2>
+        <label>Set/minifig number
+          <input name="item_number" placeholder="77241-1 or sw0527a or fig-000422" required>
+        </label>
+        <div class="row">
+          <label>Type
+            <select name="item_type">
+              <option value="auto">Auto-detect</option>
+              <option value="set">Set</option>
+              <option value="minifig">Minifig</option>
+            </select>
+          </label>
+          <label>List
+            <select name="list_kind">
+              <option value="owned">Owned</option>
+              <option value="wanted">Wanted</option>
+            </select>
+          </label>
+          <label>Quantity
+            <input type="number" min="1" name="quantity" value="1">
+          </label>
+        </div>
+        <label>Notes
+          <input name="notes" placeholder="Optional notes">
+        </label>
+        <button class="button" type="submit">Add + enrich</button>
+      </form>
+
+      <form class="card form" method="post" action="{{ url_for('import_csv') }}" enctype="multipart/form-data">
+        <h2>Import Rebrickable owned CSV</h2>
+        <p class="muted">Accepts the standard columns: <code>Set Number</code>, <code>Quantity</code>, <code>Includes Spares</code>, <code>Inventory Ver</code>.</p>
+        <div class="file-picker">
+          <input id="csv_file" class="file-input" type="file" name="csv_file" accept=".csv,.txt,text/csv,application/vnd.ms-excel" required>
+          <button class="button secondary" type="button" id="pick_csv">Choose file</button>
+          <span class="file-name muted" id="csv_name">No file selected</span>
+        </div>
+        <p class="muted">On iPhone, tap Choose file, pick the CSV from Files, then tap Import CSV.</p>
+        <button class="button" type="submit">Import CSV</button>
+      </form>
+    </section>
+
+    <section class="card form">
+      <h2>Filter</h2>
+      <form class="row" method="get">
+        <input name="q" value="{{ q }}" placeholder="Search by number, name, or source set">
+        <select name="list_kind">
+          <option value="all" {% if list_kind == 'all' %}selected{% endif %}>All lists</option>
+          <option value="owned" {% if list_kind == 'owned' %}selected{% endif %}>Owned</option>
+          <option value="wanted" {% if list_kind == 'wanted' %}selected{% endif %}>Wanted</option>
+        </select>
+        <select name="item_type">
+          <option value="all" {% if item_type == 'all' %}selected{% endif %}>All types</option>
+          <option value="set" {% if item_type == 'set' %}selected{% endif %}>Sets</option>
+          <option value="minifig" {% if item_type == 'minifig' %}selected{% endif %}>Minifigs</option>
+        </select>
+        <button class="button secondary" type="submit">Apply</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Collection</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Photo / Item</th>
+              <th>List</th>
+              <th>Year</th>
+              <th>Pieces / Sets</th>
+              <th>Value</th>
+              <th>Market value</th>
+              <th>Qty</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for item in items %}
+            <tr>
+              <td>
+                <div class="item-cell">
+                  <div class="thumb-wrap">
+                    {% if item['image_url'] %}
+                      <img class="thumb" src="{{ item['image_url'] }}" alt="{{ item['name'] or item['item_number'] }}">
+                    {% else %}
+                      <div class="thumb placeholder">No image</div>
+                    {% endif %}
+                  </div>
+                  <div>
+                    {% set display_name = item['name'] if item['name'] else item['item_number'] %}
+                    <a class="item-link" href="{{ url_for('item_detail', item_id=item['id']) }}"><strong>{{ display_name }}</strong></a>
+                    <div class="muted">{% if item['item_type'] == 'set' %}Set{% else %}Minifig{% endif %} {{ item['item_number'] }}</div>
+                    {% if item['source_set_number'] %}<div class="muted">From set {{ item['source_set_number'] }}</div>{% endif %}
+                  </div>
+                </div>
+              </td>
+              <td><span class="pill {{ item['list_kind'] }}">{{ item['list_kind'] }}</span></td>
+              <td>{{ item['year_released'] or '—' }}</td>
+              <td>{% if item['item_type'] == 'set' %}{{ item['pieces'] or '—' }} / {{ item['minifig_count'] or '—' }}{% else %}{{ item['appears_in'] or '—' }}{% endif %}</td>
+              <td>{% if item['item_type'] == 'minifig' %}{{ item['msrp'] or '—' }}{% else %}{{ item['msrp'] or '—' }}{% endif %}</td>
+              <td>{% if item['market_new'] or item['market_used'] %}{{ item['market_new'] or item['market_used'] }}{% else %}—{% endif %}</td>
+              <td>
+                <form method="post" action="{{ url_for('update_quantity', item_id=item['id']) }}" class="inline-form">
+                  <input class="qty" type="number" min="0" name="quantity" value="{{ item['quantity'] }}">
+                  <button class="button tiny secondary" type="submit">Save</button>
+                </form>
+              </td>
+              <td>
+                <form method="post" action="{{ url_for('update_notes', item_id=item['id']) }}" class="notes-form">
+                  <input name="notes" value="{{ item['notes'] or '' }}" placeholder="Type notes...">
+                  <button class="button tiny secondary" type="submit">Save</button>
+                </form>
+              </td>
+              <td>
+                <div class="actions">
+                  <form method="post" action="{{ url_for('refresh_item', item_id=item['id']) }}"><button class="button tiny secondary" type="submit">Refresh</button></form>
+                  <form method="post" action="{{ url_for('remove_item', item_id=item['id']) }}" onsubmit="return confirm('Remove this item?');"><button class="button tiny danger" type="submit">Delete</button></form>
+                </div>
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="9" class="empty">No items yet.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <script>
+        (function () {
+          const input = document.getElementById('csv_file');
+          const pick = document.getElementById('pick_csv');
+          const name = document.getElementById('csv_name');
+          if (!input || !pick || !name) return;
+          pick.addEventListener('click', () => input.click());
+          input.addEventListener('change', () => {
+            name.textContent = input.files && input.files.length ? input.files[0].name : 'No file selected';
+          });
+        })();
+      </script>
+    </section>
+  </div>
+</body>
+</html>

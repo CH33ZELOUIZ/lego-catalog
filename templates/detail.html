@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ item['name'] if item['name'] and item['name'] != item['item_number'] else item['item_number'] }} - LEGO Catalog</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div>
+        <h1>{{ item['name'] if item['name'] and item['name'] != item['item_number'] else item['item_number'] }}</h1>
+        <p>{{ item['item_type']|capitalize }} {{ item['item_number'] }}</p>
+      </div>
+      <a class="button secondary" href="{{ url_for('index') }}">Back</a>
+    </header>
+
+    <section class="card">
+      <div class="item-cell" style="align-items:flex-start;">
+        <div class="thumb-wrap">
+          {% if item['image_url'] %}
+            <img class="thumb" src="{{ item['image_url'] }}" alt="{{ item['name'] or item['item_number'] }}">
+          {% else %}
+            <div class="thumb placeholder">No image</div>
+          {% endif %}
+        </div>
+        <div>
+          <p><strong>Year:</strong> {{ item['year_released'] or '—' }}</p>
+          {% if item['item_type'] == 'set' %}
+            <p><strong>Pieces:</strong> {{ item['pieces'] or '—' }}</p>
+            <p><strong>Minifigs:</strong> {{ item['minifig_count'] or '—' }}</p>
+          {% else %}
+            <p><strong>Appears in:</strong> {{ item['appears_in'] or '—' }}</p>
+          {% endif %}
+          <p><strong>Value:</strong> {{ item['msrp'] or item['market_new'] or item['market_used'] or '—' }}</p>
+          <p><strong>Market value:</strong> {{ item['market_new'] or item['market_used'] or '—' }}</p>
+          <p><strong>Quantity:</strong> {{ item['quantity'] }}</p>
+          <p><strong>Notes:</strong> {{ item['notes'] or '—' }}</p>
+        </div>
+      </div>
+    </section>
+
+    {% if item['item_type'] == 'set' %}
+    <section class="card">
+      <h2>Minifigures in this set</h2>
+      <div class="grid two">
+        {% for fig in related if fig['item_type'] == 'minifig' %}
+          <div class="card">
+            <div class="item-cell">
+              <div class="thumb-wrap">
+                {% if fig['image_url'] %}<img class="thumb" src="{{ fig['image_url'] }}" alt="{{ fig['name'] or fig['item_number'] }}">{% endif %}
+              </div>
+              <div>
+                <strong>{{ fig['name'] if fig['name'] and fig['name'] != fig['item_number'] else fig['item_number'] }}</strong>
+                <div class="muted">Minifig {{ fig['item_number'] }}</div>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <p class="muted">No linked minifigures yet.</p>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Review Queue - LEGO Catalog</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div>
+        <h1>Review queue</h1>
+        <p>Uncertain minifigs, missing images, and best-effort imports from the low-light photo batch.</p>
+      </div>
+      <div class="actions">
+        <a class="button secondary" href="{{ url_for('index') }}">Back to catalog</a>
+        <form method="post" action="{{ url_for('review_refresh') }}">
+          <button class="button" type="submit">Retry enrichment</button>
+        </form>
+      </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <section class="flash-wrap">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% endwith %}
+
+    <section class="card">
+      <h2>Review items</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Photo / Item</th>
+              <th>Year</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+              <tr>
+                <td>
+                  <div class="item-cell">
+                    <div class="thumb-wrap">
+                      {% if item['image_url'] %}
+                        <img class="thumb" src="{{ item['image_url'] }}" alt="{{ item['name'] or item['item_number'] }}">
+                      {% else %}
+                        <div class="thumb placeholder">No image</div>
+                      {% endif %}
+                    </div>
+                    <div>
+                      <a class="item-link" href="{{ url_for('item_detail', item_id=item['id']) }}"><strong>{{ item['name'] or item['item_number'] }}</strong></a>
+                      <div class="muted">{{ item['item_number'] }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ item['year_released'] or '—' }}</td>
+                <td>
+                  {% if 'Inferred best-effort match' in (item['notes'] or '') %}
+                    <span class="pill review">inferred</span>
+                  {% else %}
+                    <span class="pill wanted">needs review</span>
+                  {% endif %}
+                </td>
+                <td>{{ item['notes'] or '—' }}</td>
+                <td>
+                  <div class="actions">
+                    <form method="post" action="{{ url_for('verify_item', item_id=item['id']) }}">
+                      <button class="button tiny" type="submit">Verify</button>
+                    </form>
+                    <form method="post" action="{{ url_for('unverify_item', item_id=item['id']) }}">
+                      <button class="button tiny secondary" type="submit">Unverify</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% else %}
+            <tr><td colspan="5" class="empty">No review items right now.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Photo extraction candidates</h2>
+      <p class="muted">Tap a file to generate a brighter manual-review version from the source HEIC.</p>
+      <div class="review-grid">
+        {% for cand in photo_candidates %}
+          <a class="review-photo" href="{{ cand.url }}" target="_blank" rel="noreferrer">
+            <span>{{ cand.file }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</body>
+</html>
