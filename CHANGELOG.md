@@ -2,13 +2,21 @@
 
 This dated backlog is generated from git history for the `lego-catalog` public template repo.
 Use it to review what changed over time directly from GitHub.
+The newest entry is labeled `HEAD` because this generated file lives inside the same commit it describes.
 
 ## 2026-06-17
 
-### `78c8e5d` — Update CH33ZE template documentation
+### `HEAD` — Update CH33ZE template documentation
 - Author: `CH33ZE`
-- Diff: `1 file changed, 34 insertions(+)`
-- Change counts: `files=1, insertions=34, deletions=0`
+- Diff: `1 file changed, 4 insertions(+), 3 deletions(-)`
+- Change counts: `files=1, insertions=4, deletions=3`
+- Changed paths:
+  - `M	CHANGELOG.md`
+
+### `f746ad1` — Update CH33ZE template documentation
+- Author: `CH33ZE`
+- Diff: `1 file changed, 43 insertions(+)`
+- Change counts: `files=1, insertions=43, deletions=0`
 - Changed paths:
   - `A	CHANGELOG.md`
 
