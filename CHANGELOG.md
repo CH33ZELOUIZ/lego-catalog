@@ -8,8 +8,12 @@ The newest entry is labeled `HEAD` because this generated file lives inside the 
 
 ### `HEAD` — Update CH33ZE template documentation
 - Author: `CH33ZE`
-- Diff: `1 file changed, 2 insertions(+), 2 deletions(-)`
-- Change counts: `files=1, insertions=2, deletions=2`
+- Diff: `current HEAD diff details omitted to avoid self-referential changelog churn`
+
+### `696c713` — Update CH33ZE template documentation
+- Author: `CH33ZE`
+- Diff: `1 file changed, 7 insertions(+)`
+- Change counts: `files=1, insertions=7, deletions=0`
 - Changed paths:
   - `M	CHANGELOG.md`
 
