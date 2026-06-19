@@ -13,6 +13,13 @@ The newest entry is labeled `HEAD` because this generated file lives inside the 
 - Changed paths:
   - `M	CHANGELOG.md`
 
+### `b34a766` — Update CH33ZE template documentation
+- Author: `CH33ZE`
+- Diff: `1 file changed, 10 insertions(+), 1 deletion(-)`
+- Change counts: `files=1, insertions=10, deletions=1`
+- Changed paths:
+  - `M	CHANGELOG.md`
+
 ## 2026-06-17
 
 ### `b85cb0a` — Update CH33ZE template documentation
